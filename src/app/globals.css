@@ -1,0 +1,259 @@
+@import "tailwindcss";
+
+@theme {
+  --color-indigo-50: #f5f3ff;
+  --color-indigo-100: #ede9fe;
+  --color-indigo-200: #ddd6fe;
+  --color-indigo-300: #c4b5fd;
+  --color-indigo-400: #a78bfa;
+  --color-indigo-500: #8b5cf6;
+  --color-indigo-600: #7c3aed;
+  --color-indigo-700: #6d28d9;
+  --color-indigo-800: #5b21b6;
+  --color-indigo-900: #4c1d95;
+  --color-indigo-950: #2e1065;
+  --color-indigo-primary: #7c3aed;
+  --color-bg-light: #fdfdfd;
+  --color-text-dark: #0f172a;
+  --color-grid-line: rgba(15, 23, 42, 0.05);
+  
+  --animate-marquee: marquee 35s linear infinite;
+
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+}
+
+@layer base {
+  :root {
+    --indigo-primary: #7c3aed;
+    --bg-light: #fdfdfd;
+    --text-dark: #0f172a;
+    --grid-line: rgba(15, 23, 42, 0.05);
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Bricolage Grotesque', sans-serif;
+  }
+
+  .font-cursive {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .text-hollow {
+    -webkit-text-stroke: 1.5px var(--text-dark) !important;
+    color: transparent !important;
+  }
+  
+  .hero-title {
+    font-size: clamp(2.5rem, 8.8vw, 9.2rem);
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+  }
+  
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+/* --- 1. CURSOR SYSTEM (Gravity Well) --- */
+#cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    background: white; 
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference; 
+    transform: translate(-50%, -50%);
+    transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1), height 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.cursor-large { margin-top: -14px; margin-left: -14px; width: 40px !important; height: 40px !important; background-color: rgba(255, 255, 255, 0.2) !important; }
+.cursor-text { margin-top: -24px; margin-left: -24px; width: 60px !important; height: 60px !important; }
+
+/* --- 2. ARTISTIC OVERLAYS --- */
+.noise-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    opacity: 0.04;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.char { display: inline-block; position: relative; perspective: 1000px; }
+.word { display: inline-block; white-space: nowrap; vertical-align: top; }
+.i-special { position: relative; display: inline-block; }
+.i-star { position: absolute; top: 10%; left: 50%; transform: translate(-50%, -50%) scale(0); width: 0.4em; height: 0.4em; opacity: 0; }
+
+/* --- 3. ARCHITECTURAL ELEMENTS --- */
+.vol-label {
+    position: absolute;
+    font-family: var(--font-bricolage), sans-serif;
+    font-size: 12vw;
+    font-weight: 800;
+    color: var(--text-dark);
+    opacity: 0.04;
+    z-index: 0;
+    pointer-events: none; 
+    line-height: 0.7;
+    white-space: nowrap;
+    bottom: 0;
+    right: 0;
+    transform: translateX(50%);
+}
+.grid-guide { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+.grid-col { border-right: 1px solid var(--grid-line); height: 100%; }
+
+/* --- 4. CORE INDUSTRIES (STATIC 4x2 GRID) --- */
+.industry-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; position: relative; z-index: 10; }
+@media (max-width: 1024px) {
+  .industry-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .industry-grid { grid-template-columns: repeat(1, 1fr); }
+}
+
+.industry-card { 
+    height: 360px;
+    background: #f1f5f9; /* Acts as default border */
+    padding: 35px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s ease;
+    z-index: 0;
+}
+.industry-card > :not(.scan-line) {
+    position: relative;
+    z-index: 2;
+}
+
+.industry-card:hover { transform: translateY(-8px); }
+
+/* The inner mask to carve out the 1px border */
+.industry-card::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    background: white;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.scan-line {
+    position: absolute;
+    width: 250%;
+    height: 250%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    background: conic-gradient(from 0deg, transparent 75%, var(--indigo-primary) 100%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.4s ease;
+}
+
+.industry-card:hover .scan-line { opacity: 1; animation: spinBorder 3s linear infinite; }
+@keyframes spinBorder { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
+/* --- 5. SERVICES TABBED INTERFACE --- */
+.tab-content { display: none; }
+.tab-content.active { display: grid; animation: tabFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.tab-btn { transition: all 0.3s ease; border-bottom: 2px solid transparent; }
+.tab-btn.active { color: var(--indigo-primary); border-bottom: 2px solid var(--indigo-primary); }
+
+@keyframes tabFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- 6. UI UTILITIES --- */
+.reveal-box {
+    position: fixed; width: 360px; height: 220px; border-radius: 4px;
+    pointer-events: none; opacity: 0; z-index: 100; overflow: hidden;
+    transform: translate(-50%, -50%) scale(0.9); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.form-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+    padding: 15px 0;
+    width: 100%;
+    transition: border-color 0.3s ease;
+    font-size: 1.1rem;
+    outline: none;
+}
+
+.form-input:focus {
+    border-bottom-color: var(--indigo-primary);
+}
+
+/* --- 7. SERVICE CARDS (snaking border like industry cards) --- */
+.service-card {
+    height: 320px;
+    background: #f1f5f9;
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s ease;
+    z-index: 0;
+}
+
+.service-card > :not(.scan-line) {
+    position: relative;
+    z-index: 2;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Inner mask to create 1px border effect */
+.service-card::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    background: white;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Reuse snaking conic-gradient for service cards */
+.service-card .scan-line {
+    position: absolute;
+    width: 250%;
+    height: 250%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    background: conic-gradient(from 0deg, transparent 75%, var(--indigo-primary) 100%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.4s ease;
+}
+
+.service-card:hover .scan-line {
+    opacity: 1;
+    animation: spinBorder 3s linear infinite;
+}

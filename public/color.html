@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <img id="im" src="file:///Users/arpit/Documents/Github/agencyservice/web/public/sunraysai.png" style="display:none;">
+  <canvas id="c"></canvas>
+  <div id="output"></div>
+  <script>
+    const im = document.getElementById('im');
+    im.onload = () => {
+      const canvas = document.getElementById('c');
+      canvas.width = im.width;
+      canvas.height = im.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(im, 0, 0);
+      const data = ctx.getImageData(0, 0, im.width, im.height).data;
+      let colors = {};
+      
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+        if (a > 200 && (r > 20 || g > 20 || b > 20) && (r < 240 || g < 240 || b < 240)) {
+            const hex = "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+            colors[hex] = (colors[hex] || 0) + 1;
+        }
+      }
+      
+      let sorted = Object.keys(colors).sort((a,b) => colors[b] - colors[a]).slice(0, 5);
+      document.getElementById('output').innerText = sorted.join(", ");
+    };
+  </script>
+</body>
+</html>
